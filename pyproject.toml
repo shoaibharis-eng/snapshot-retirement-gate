@@ -1,0 +1,17 @@
+# There is nothing to install: the project runs on the standard library alone.
+# This file only configures optional tools.
+
+# Linter and formatter (https://docs.astral.sh/ruff/).
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+extend-exclude = ["reproduction/project"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+# The documented test runner is unittest. This keeps a bare `pytest` on the
+# verifier's tests and away from the toy project's suite, which is data for
+# the gate and not part of this repository's own tests.
+[tool.pytest.ini_options]
+testpaths = ["tests"]

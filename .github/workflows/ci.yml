@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    # Pinned so that the oldest supported Python stays available.
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.11", "3.13"]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Run the tests
+        run: python -m unittest
+      - name: Replay every scenario
+        run: python -m reproduction
+      - name: Committed traces are current
+        run: git diff --exit-code traces/
+
+  lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Install ruff
+        run: pip install ruff==0.17.6
+      - name: Lint
+        run: ruff check .
+      - name: Check formatting
+        run: ruff format --check .
